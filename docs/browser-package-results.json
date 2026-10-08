@@ -1,0 +1,63 @@
+{
+  "suite": "browser-package",
+  "checks": 8,
+  "archiveBytes": 729750,
+  "browser": "153.0.8010.0",
+  "performanceScope": "Headless Chromium on this host; 4x CPU throttle is synthetic, not Android acceptance.",
+  "measurements": [
+    {
+      "cpuSlowdown": 1,
+      "trial": 1,
+      "searchMs": 262,
+      "zoneMs": 85,
+      "simulations": 75,
+      "status": "ok",
+      "zoneStatus": "sampled"
+    },
+    {
+      "cpuSlowdown": 1,
+      "trial": 2,
+      "searchMs": 219,
+      "zoneMs": 63,
+      "simulations": 75,
+      "status": "ok",
+      "zoneStatus": "sampled"
+    },
+    {
+      "cpuSlowdown": 1,
+      "trial": 3,
+      "searchMs": 231,
+      "zoneMs": 62,
+      "simulations": 75,
+      "status": "ok",
+      "zoneStatus": "sampled"
+    },
+    {
+      "cpuSlowdown": 4,
+      "trial": 1,
+      "searchMs": 696,
+      "zoneMs": 198,
+      "simulations": 75,
+      "status": "ok",
+      "zoneStatus": "sampled"
+    },
+    {
+      "cpuSlowdown": 4,
+      "trial": 2,
+      "searchMs": 694,
+      "zoneMs": 198,
+      "simulations": 75,
+      "status": "ok",
+      "zoneStatus": "sampled"
+    },
+    {
+      "cpuSlowdown": 4,
+      "trial": 3,
+      "searchMs": 760,
+      "zoneMs": 215,
+      "simulations": 75,
+      "status": "ok",
+      "zoneStatus": "sampled"
+    }
+  ]
+}
