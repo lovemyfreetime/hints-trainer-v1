@@ -4237,6 +4237,14 @@
     window.__BT_SIMULATION__ = Object.freeze({
         version:'hints-sim-1', capture:captureSimulationSnapshot, evaluate:evaluateSimulationShot,
         redraw: () => draw(), isBusy: () => !!animation,
+        syncProjector: () => syncProjector(),
+        openProjector: () => {
+            if (isProjector) return false;
+            const url=new URL(location.href); url.searchParams.set('projector','1');
+            projectorWin=window.open(url.href,'hints-v1-projector');
+            if (!projectorWin) return false;
+            projectorWin.focus(); syncProjector(); return true;
+        },
         apply: shot => {
             if (animation) return;
             const keys=['freeAim','speed','follow','sideSpin','cueElevationDeg'];
@@ -6680,7 +6688,7 @@
     function syncProjector() { if (isProjector)
         return; if (projectorWin && !projectorWin.closed) {
         try {
-            projectorWin.postMessage({ type: 'state', state: Object.assign(Object.assign({}, S), { preview: S.preview }) }, '*');
+            projectorWin.postMessage({ type: 'state', state: Object.assign(Object.assign({}, S), { preview: S.preview }), hints: window.BTHintsUI?.exportState() || null }, location.origin==='null'?'*':location.origin);
         }
         catch (e) { }
     } }
@@ -7357,6 +7365,7 @@
         let idx = 0;
         const start = performance.now();
         const fps = 60;
+        window.BTHintsUI?.invalidate('Shot is running. Find a fresh hint after it finishes.');
         animation = { current: sim.frames[0] };
         const runningAnimation = animation;
         function tick(now) {
@@ -9875,7 +9884,7 @@
             if (p && p.classList.contains('open') && !p.contains(ev.target) && ev.target !== b)
                 p.classList.remove('open');
         });
-        window.addEventListener('message', ev => { if (ev.data && ev.data.type === 'projectorReady')
+        window.addEventListener('message', ev => { if (ev.source===projectorWin && ev.origin===location.origin && ev.data && ev.data.type === 'projectorReady')
             syncProjector(); });
         $('bankToolToggle').addEventListener('click', () => beginBankKick('bank'));
         $('kickToolToggle').addEventListener('click', () => beginBankKick('kick'));
@@ -10740,8 +10749,11 @@
                 window.opener.postMessage({ type: 'projectorReady' }, '*');
         }
         catch (e) { }
-        window.addEventListener('message', ev => { if (ev.data && ev.data.type === 'state') {
+        window.addEventListener('message', ev => {
+            if (ev.source!==window.opener || ev.origin!==location.origin) return;
+            if (ev.data && ev.data.type === 'state') {
             S = Object.assign(Object.assign({}, S), ev.data.state);
+            window.BTHintsUI?.receiveState(ev.data.hints || null);
             draw();
         }
         else if (ev.data && ev.data.type === 'toggleProjectionOnly') {

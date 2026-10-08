@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hints-trainer-v1-preview-1';
+const CACHE_NAME = 'hints-trainer-v1-preview-2';
 const CACHE_PREFIX = 'hints-trainer-v1-';
 const APP_SHELL = [
   './index.html',
