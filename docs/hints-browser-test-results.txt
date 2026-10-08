@@ -1,0 +1,11 @@
+PASS panel opens with large controls and explicit foul-history choice
+PASS practice search reveals a verified two-shot plan
+PASS five cumulative levels and all shape controls draw without errors
+PASS applying recommendation changes controls and clears stale hints
+PASS changing game cancels in-progress results
+PASS 8-ball practice plan is available
+PASS keyboard dismissal and narrow viewport preserve reachable controls
+PASS practice layout can be undone without losing prior table
+PASS offline reload retains coaching modules
+PASS no browser JavaScript exceptions
+10 Chromium UI checks passed. Physical Android and projector acceptance remain pending.
