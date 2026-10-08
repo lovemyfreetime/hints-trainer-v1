@@ -1,0 +1,113 @@
+{
+  "sourceCommit": "15c6c76fe5aaadca507313de56a124291992881c",
+  "method": "Node VM: verbatim source functions, UI bootstrap excluded",
+  "selfTests": {
+    "ok": true,
+    "failures": []
+  },
+  "cases": [
+    {
+      "name": "default",
+      "elapsedMs": 114.78,
+      "deterministic": true,
+      "stateUnchanged": true,
+      "previewAnimationResultsEqual": true,
+      "pocketed": [],
+      "lastPathTime": 5.54,
+      "finalFrameDeltaM": 0.000013672207000667469,
+      "hasSettledFlag": false
+    },
+    {
+      "name": "follow",
+      "elapsedMs": 81.04,
+      "deterministic": true,
+      "stateUnchanged": true,
+      "previewAnimationResultsEqual": true,
+      "pocketed": [],
+      "lastPathTime": 4.08,
+      "finalFrameDeltaM": 0.00003707799392777015,
+      "hasSettledFlag": false
+    },
+    {
+      "name": "draw",
+      "elapsedMs": 74.61,
+      "deterministic": true,
+      "stateUnchanged": true,
+      "previewAnimationResultsEqual": true,
+      "pocketed": [],
+      "lastPathTime": 4.29,
+      "finalFrameDeltaM": 0.00003207436017004474,
+      "hasSettledFlag": false
+    },
+    {
+      "name": "side-spin",
+      "elapsedMs": 104.13,
+      "deterministic": true,
+      "stateUnchanged": true,
+      "previewAnimationResultsEqual": true,
+      "pocketed": [],
+      "lastPathTime": 5.590000000000001,
+      "finalFrameDeltaM": 0.000026313859135293794,
+      "hasSettledFlag": false
+    },
+    {
+      "name": "airborne",
+      "elapsedMs": 126.07,
+      "deterministic": true,
+      "stateUnchanged": true,
+      "previewAnimationResultsEqual": true,
+      "pocketed": [],
+      "lastPathTime": 4.9,
+      "finalFrameDeltaM": 0.000006362924818882061,
+      "hasSettledFlag": false
+    },
+    {
+      "name": "scratch",
+      "elapsedMs": 2.04,
+      "deterministic": true,
+      "stateUnchanged": true,
+      "previewAnimationResultsEqual": true,
+      "pocketed": [
+        0
+      ],
+      "lastPathTime": 0.25,
+      "finalFrameDeltaM": 0,
+      "hasSettledFlag": false
+    },
+    {
+      "name": "marker",
+      "elapsedMs": 147.36,
+      "deterministic": true,
+      "stateUnchanged": true,
+      "previewAnimationResultsEqual": true,
+      "pocketed": [],
+      "lastPathTime": 5.54,
+      "finalFrameDeltaM": 0.000013672207000667469,
+      "hasSettledFlag": false
+    },
+    {
+      "name": "jaw-contact-headless",
+      "error": "firstEvent is not defined"
+    },
+    {
+      "name": "low-friction-cap",
+      "elapsedMs": 163.63,
+      "deterministic": true,
+      "stateUnchanged": true,
+      "previewAnimationResultsEqual": true,
+      "pocketed": [],
+      "lastPathTime": 19.990000000000002,
+      "finalFrameDeltaM": 0.013491401051681562,
+      "hasSettledFlag": false
+    }
+  ],
+  "shot2FirstCallStateUnchanged": true,
+  "shot2RepeatStateUnchanged": true,
+  "noCueResultKeys": [
+    "paths",
+    "frames",
+    "firstEvent",
+    "firstBallContact"
+  ],
+  "shot2IncompleteStateUnchanged": false
+}
