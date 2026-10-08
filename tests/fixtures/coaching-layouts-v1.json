@@ -1,0 +1,1118 @@
+{
+  "version": 1,
+  "tableL": 2.2352,
+  "tableW": 1.1176,
+  "cases": [
+    {
+      "name": "9-ball straight side pocket and finish",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "two-shot-win"
+    },
+    {
+      "name": "9-ball bottom side pocket and finish",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.4675999999999999,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.8375999999999999,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.5176,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "two-shot-win"
+    },
+    {
+      "name": "9-ball top left corner",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 0.65,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 0.22,
+          "y": 0.22,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.65,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "pot"
+    },
+    {
+      "name": "9-ball top right corner",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.5852,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 2.0151999999999997,
+          "y": 0.22,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 0.55,
+          "y": 0.7,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "pot"
+    },
+    {
+      "name": "9-ball bottom left corner",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 0.65,
+          "y": 0.4675999999999999,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 0.22,
+          "y": 0.8976,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.45,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "pot"
+    },
+    {
+      "name": "9-ball bottom right corner",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.5852,
+          "y": 0.4675999999999999,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 2.0151999999999997,
+          "y": 0.8976,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 0.55,
+          "y": 0.4,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "pot"
+    },
+    {
+      "name": "9-ball moderate left cut",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 0.9176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.7,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "pot"
+    },
+    {
+      "name": "9-ball moderate right cut",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.3175999999999999,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 0.55,
+          "y": 0.7,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "pot"
+    },
+    {
+      "name": "9-ball lowest remaining is four",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 4,
+          "n": "4",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 7,
+          "n": "7",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 0.5,
+          "y": 0.85,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "pot",
+      "firstTarget": 4
+    },
+    {
+      "name": "9-ball three remaining objects",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 2,
+          "n": "2",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 0.5,
+          "y": 0.85,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "pot",
+      "firstTarget": 1
+    },
+    {
+      "name": "9-ball final nine at side pocket",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "win"
+    },
+    {
+      "name": "9-ball final nine at corner",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 0.65,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 0.22,
+          "y": 0.22,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "win"
+    },
+    {
+      "name": "8-ball solids then eight",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 8,
+          "n": "8",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 0.5,
+          "y": 0.85,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-8ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "shooterGroup": "solids"
+      },
+      "expected": "two-shot-win"
+    },
+    {
+      "name": "8-ball stripes then eight",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 8,
+          "n": "8",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 0.5,
+          "y": 0.85,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-8ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "shooterGroup": "stripes"
+      },
+      "expected": "two-shot-win"
+    },
+    {
+      "name": "8-ball solid corner with two own balls",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 0.65,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 0.22,
+          "y": 0.22,
+          "active": true
+        },
+        {
+          "id": 2,
+          "n": "2",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        },
+        {
+          "id": 8,
+          "n": "8",
+          "x": 0.5,
+          "y": 0.9,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.8,
+          "y": 0.9,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-8ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "shooterGroup": "solids"
+      },
+      "expected": "pot"
+    },
+    {
+      "name": "8-ball stripe corner with two own balls",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.5852,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 2.0151999999999997,
+          "y": 0.22,
+          "active": true
+        },
+        {
+          "id": 10,
+          "n": "10",
+          "x": 0.5,
+          "y": 0.6,
+          "active": true
+        },
+        {
+          "id": 8,
+          "n": "8",
+          "x": 1.7,
+          "y": 0.9,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 0.45,
+          "y": 0.9,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-8ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "shooterGroup": "stripes"
+      },
+      "expected": "pot"
+    },
+    {
+      "name": "8-ball open table called assignment",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 2,
+          "n": "2",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        },
+        {
+          "id": 8,
+          "n": "8",
+          "x": 0.5,
+          "y": 0.85,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.95,
+          "y": 0.85,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-8ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "shooterGroup": null
+      },
+      "expected": "pot"
+    },
+    {
+      "name": "8-ball eight allowed with opponent balls remaining",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 8,
+          "n": "8",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        },
+        {
+          "id": 10,
+          "n": "10",
+          "x": 0.5,
+          "y": 0.85,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-8ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "shooterGroup": "solids"
+      },
+      "expected": "win"
+    },
+    {
+      "name": "8-ball eight corner win",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 0.65,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 8,
+          "n": "8",
+          "x": 0.22,
+          "y": 0.22,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-8ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "shooterGroup": "solids"
+      },
+      "expected": "win"
+    },
+    {
+      "name": "8-ball assigned stripe side cut",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 0.9176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 10,
+          "n": "10",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        },
+        {
+          "id": 8,
+          "n": "8",
+          "x": 0.5,
+          "y": 0.85,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.95,
+          "y": 0.85,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-8ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "shooterGroup": "stripes"
+      },
+      "expected": "pot"
+    },
+    {
+      "name": "9-ball blocked first contact",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 2,
+          "n": "2",
+          "x": 1.1176,
+          "y": 0.48,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.8,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "blocked-route",
+      "forbiddenPocket": "TM"
+    },
+    {
+      "name": "9-ball blocked object path",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 2,
+          "n": "2",
+          "x": 1.1176,
+          "y": 0.14,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.8,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "blocked-route",
+      "forbiddenPocket": "TM"
+    },
+    {
+      "name": "9-ball light rolling resistance",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "pot",
+      "calibration": {
+        "muRoll": 0.008
+      }
+    },
+    {
+      "name": "9-ball stronger rolling resistance",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "pot",
+      "calibration": {
+        "muRoll": 0.02
+      }
+    },
+    {
+      "name": "reject frozen cushion ball",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 0.8,
+          "y": 0.6,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 0.028575,
+          "y": 0.4,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "unsupported",
+      "reason": "near-cushion-unsupported"
+    },
+    {
+      "name": "reject touching balls",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.59285,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "unsupported",
+      "reason": "touching-balls-unsupported"
+    },
+    {
+      "name": "reject missing cue",
+      "balls": [
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "unsupported",
+      "reason": "missing-cue-ball"
+    },
+    {
+      "name": "reject unsupported break",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "break",
+        "frozenBallIds": [],
+        "consecutiveFouls": 0,
+        "warnedOnTwo": false
+      },
+      "expected": "unsupported",
+      "reason": "unsupported-phase"
+    },
+    {
+      "name": "reject unknown nine-ball foul history",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 9,
+          "n": "9",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-9ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "consecutiveFouls": null,
+        "warnedOnTwo": false
+      },
+      "expected": "unsupported",
+      "reason": "invalid-foul-history"
+    },
+    {
+      "name": "reject open eight-ball absent group",
+      "balls": [
+        {
+          "id": 0,
+          "n": "CB",
+          "x": 1.1176,
+          "y": 0.65,
+          "active": true
+        },
+        {
+          "id": 1,
+          "n": "1",
+          "x": 1.1176,
+          "y": 0.28,
+          "active": true
+        },
+        {
+          "id": 8,
+          "n": "8",
+          "x": 1.7,
+          "y": 0.6,
+          "active": true
+        }
+      ],
+      "state": {
+        "profile": "wpa-8ball-normal-v1",
+        "phase": "normal",
+        "frozenBallIds": [],
+        "shooterGroup": null
+      },
+      "expected": "unsupported",
+      "reason": "open-table-cleared-group-needs-claim"
+    }
+  ]
+}
