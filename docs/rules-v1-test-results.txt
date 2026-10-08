@@ -1,0 +1,55 @@
+PASS 9 lowest legal pot
+PASS 9 wrong first contact
+PASS 9 safety passes turn
+PASS 9 legal combination win
+PASS 9 wrong first plus 9 requires spot
+PASS 9 scratch with pot
+PASS 9 scratch with nine requires spot
+PASS 9 off table object
+PASS 9 off table nine
+PASS 9 no contact
+PASS 9 no rail
+PASS rail before contact does not qualify
+PASS object rail qualifies
+PASS same step legal contact benefits shooter
+PASS same step rail qualifies
+PASS three warned fouls lose
+PASS unwarned third foul stays second
+PASS 8 open assigns called solid not first pot
+PASS 8 open assigns stripe
+PASS 8 open missed call stays open
+PASS 8 open first eight foul
+PASS 8 assigned legal pot
+PASS 8 incidental opponent first pot allowed
+PASS 8 opponent first contact foul
+PASS 8 early loss
+PASS 8 last group and eight same shot loses
+PASS 8 win with opponent balls remaining
+PASS 8 incorrect pocket loses
+PASS 8 scratched win loses
+PASS 8 scratch on own pot
+PASS 8 off table loses
+PASS 8 wrong called pocket passes turn
+PASS 8 declared safety can pot but passes turn
+PASS 8 safety pot eight loses
+PASS 8 no rail safety foul
+PASS unsupported input {"profile":"wpa-9ball-normal-v1","phase":"break","frozenBallIds":[],"consecutiveFouls":0,"warnedOnTwo":false}
+PASS unsupported input {"profile":"wpa-9ball-normal-v1","phase":"push-out","frozenBallIds":[],"consecutiveFouls":0,"warnedOnTwo":false}
+PASS unsupported input {"profile":"house","phase":"normal","frozenBallIds":[],"consecutiveFouls":0,"warnedOnTwo":false}
+PASS unsupported input {"profile":"wpa-9ball-normal-v1","phase":"normal","frozenBallIds":[1],"consecutiveFouls":0,"warnedOnTwo":false}
+PASS unsupported input {"profile":"wpa-8ball-normal-v1","phase":"normal","frozenBallIds":[],"shooterGroup":"solids","call":null}
+PASS reject unsettled wpa-8ball-normal-v1
+PASS reject unsettled wpa-9ball-normal-v1
+PASS reject missing remaining ball
+PASS reject pocket ball still present
+PASS reject fabricated first contact
+PASS reject unknown event
+PASS reject unordered event
+PASS reject unknown pocket
+PASS reject missing cue
+PASS group assignment follows called ball; next call cleared
+PASS legal shot resets shooter foul count
+PASS real simulator adapter: stationary foul
+PASS real simulator adapter: straight legal contact and rail
+PASS real simulator adapter: wrong first contact
+54 rules checks passed.

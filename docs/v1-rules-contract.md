@@ -1,106 +1,62 @@
-# Hints Trainer V1 — 8-ball and 9-ball rules contract
+# Hints Trainer V1 rules boundary
 
-Status: design contract for the next implementation step. It defines what the hint engine may call legal; it does not change the existing trainer yet.
+Implemented in `src/rules-v1.js`, independently of the trainer UI. This supersedes the earlier draft contract. The module has no runtime dependencies, storage, network calls, or mutations of its inputs. Browser global: `BTHintsRules`; CommonJS exports the same API. It is not yet loaded by the existing trainer page.
 
-## Shared shot facts
+## Rules basis and corrections
 
-The simulator supplies a raw result. The rules evaluator must inspect the complete ordered event list and resulting table state.
+Reference: [WPA Rules of Play, effective September 15, 2025](https://www.wpapool.com/wp-content/uploads/2026/01/2026.01.02-WPA-Rules.pdf), sections 1.7, 2.7, 3.1–3.5, 3.13, 4.4–4.9, and 5.4–5.8.
 
-A candidate is never presented as a valid hint unless the rules evaluator returns `legal: true`. A physically successful pot can still be illegal because of first contact, a scratch, an off-table object ball, a required group, or an endgame condition.
+An opponent's remaining balls do not prevent an 8-ball win. Incidental opponent-ball pots are allowed after legal contact. Open-table assignment follows the legally completed called shot, not pocket order. A non-scoring shot needs a rail after contact. An early, uncalled, fouled, or off-table 8 loses during normal play. A fouled or off-table 9 needs spotting. Three consecutive 9-ball fouls lose only with the required warning. These replace incorrect or incomplete conditions in the previous draft.
 
-The rules evaluator must be deterministic, offline, side-effect free, and independent of UI markers. It receives an immutable snapshot, a rules profile, and a simulation result.
-
-The evaluator returns:
+## API
 
 ```js
-{
-  legal, game, reasonCode, reason,
-  firstObjectContactId, pocketedObjectIds, pocketedCueBall,
-  requiredBallId, nextRequiredBallId, terminal, winner,
-  resultingState, foul
-}
+const { rules, simulation } = BTHintsRules.evaluateCandidate(
+  window.__BT_SIMULATION__.evaluate,
+  snapshot,
+  { freeAim: { x: 1, y: 0.5 }, speed: 2 },
+  {
+    profile: 'wpa-8ball-normal-v1',
+    phase: 'normal',
+    frozenBallIds: [],
+    shooterGroup: 'solids', // null on an open table; otherwise solids or stripes
+    call: { ballId: 1, pocketId: 'TL' }
+  }
+);
 ```
 
-`resultingState` is produced from the simulator's actual final state. A scratched cue ball remains absent in this raw state; the practice interface may separately restore the cue for user convenience.
+Alternatively, `evaluateRules(snapshot, simulation, state)` evaluates an existing simulation without rerunning physics. Snapshot and result use the `hints-sim-1` interface. The ordered `events` ledger is authoritative; redundant legacy pocket/path arrays are not used.
 
-## 9-ball profile
+For 9-ball use `profile: 'wpa-9ball-normal-v1'`, `phase: 'normal'`, `frozenBallIds: []`, `consecutiveFouls: 0|1|2`, and `warnedOnTwo: boolean`. History belongs to the current shooter. The caller must supply known history rather than defaulting unknown history to zero. The warning flag may be true only when the count is two.
 
-- Legal object balls are 1 through 9 that remain active.
-- The required first object contact is the lowest-numbered active object ball.
-- Any object ball may be pocketed after legal first contact.
-- Pocketing the 9 legally ends the rack and makes the shooter the winner.
-- Pocketing another ball legally continues the rack with the lowest remaining active ball.
-- A shot with no object-ball contact is a foul.
-- A shot whose first object contact is not the lowest active ball is a foul.
-- Cue-ball pocketing is a foul, regardless of whether an object ball was also pocketed.
-- An object ball leaving the table is a foul.
-- A legal shot need not pocket a ball; a legal safety is allowed when first contact and table boundaries are valid.
-- A legal 9-ball win must include legal first contact and no foul. The evaluator must not accept a 9 merely because it appears in `pocketEvents`.
+For 8-ball provide a called physical ball ID and pocket (`TL`, `TM`, `TR`, `BL`, `BM`, `BR`), or `safety: true` with no call. Ball IDs are actual ball numbers; zero is the cue ball. Missing call information is not interpreted as an unannounced house-rule variant. Calls are candidate metadata; this change adds no called-shot UI.
 
-The profile intentionally leaves push-out rules outside this first implementation unless the game-state design explicitly enables a push-out phase. A future rules change must add a separate state flag and acceptance cases.
+## Result and search behavior
 
-## 8-ball profile
+- `classification`: `continue`, `foul`, `win`, `loss`, or `unusable`. Here `continue` means the rack continues, not necessarily the shooter's inning.
+- `legal`: accepted by the supported rules boundary. A legal missed call can pass the turn. A loss or unusable result is never legal.
+- `reasonCode`, `fouls`, and `foul`: diagnostics; an uncalled 8 can be a loss without a standard foul.
+- `terminal`, `winner`: rack outcome; winner is relative to the shooter.
+- `retainsTurn`, `canContinue`: gates for the current shooter's second-shot search. Terminal shots and turn changes stop the rollout.
+- `requiredFirstContactIds`, `firstObjectContactId`, `firstContactIds`: eligible and observed initial targets.
+- `pocketedObjectIds`, `pocketedCueBall`: preserve actual ledger pocket order.
+- `nextRequiredBallId`: next 9-ball target, including a pending respot.
+- `resultingState`: independent copy of the simulator's exact raw final snapshot. Never restores the scratched cue or invents a spotted ball position.
+- `respotBallIds`, `ballInHand`: work for the game controller before another player shoots.
+- `nextShooterState`: updated group and foul history for this shooter, not the opponent's state. Call/safety and frozen-ball metadata are removed: reassess the new table and provide the next candidate's declaration.
 
-V1 uses an explicit group state:
+A scorer must check `legal`, then treat wins separately, and use `canContinue` before starting the second-shot rollout. Do not feed the prior shooter's group/history into the opponent's turn. A raw physical endpoint with a respot pending is not a ready-to-play layout.
 
-```js
-{ phase: 'open' | 'assigned' | 'eight', shooterGroup: 'solids' | 'stripes' | null }
-```
+## Conservative boundaries
 
-- On an open table, the shooter may legally contact and pocket a solid or stripe. The 8 is not a legal first object target while groups remain.
-- Assignment occurs only when the rules variant allows it: the first legally pocketed solid or stripe on an open table establishes the shooter's group. A safety without a pocket does not assign a group.
-- Once assigned, the shooter must first contact one of their active group balls.
-- Pocketing an opponent's ball first or pocketing the 8 before the shooter's group is cleared is a foul/loss condition according to the terminal classification below.
-- When all of the shooter's group balls are cleared, the phase becomes `eight`; the required first contact is the 8.
-- Pocketing the 8 legally in phase `eight` ends the rack with a win.
-- Pocketing the 8 early, pocketing it on a foul, or pocketing it while the opponent's group remains active is a loss under standard call-shot 8-ball assumptions.
-- Cue-ball pocketing is a foul. An object ball leaving the table is a foul.
-- A legal shot may be a safety and may pocket no ball.
-- This contract does not claim to implement called-pocket requirements. Until call-shot data exists in the snapshot, a pocket is evaluated geometrically and the rules layer must label the variant as `no-call`. Adding called-pocket enforcement requires a declared pocket target in the candidate.
+Only normal shots are supported. Breaks, push-outs, declared frozen-ball situations, and the unusual open-table case with an entire group already absent return `unusable`. The latter requires an explicit temporary-group-claim workflow that is not implemented. `frozenBallIds: []` is a caller assertion based on the current layout, not permission to skip checking cushions. No automatic spotting or cue placement is provided.
 
-Because 8-ball variants differ, the evaluator must reject an unknown or missing rules profile rather than silently selecting a house rule. The implementation must record the selected profile in the result.
+This is simulated shot legality, not a referee for physical stroke violations such as double hits, touched balls, feet, or player conduct. No full match controller is present. The timestamp granularity is 1/600 second; the module treats same-step contact/rail events as simultaneous and allows a legal target among same-step first contacts. This is an explicit approximation, not a claim of sub-step precision.
 
-## Terminal classification
+Incomplete, inconsistent, unknown-profile, or unsettled inputs return `unusable`. Removed balls must match the final snapshot; first-contact metadata must match the event ledger. Input positions are assumed to come from the validated simulator interface; this module does not duplicate its calibration/geometry validation.
 
-The evaluator distinguishes:
+## Verification and remaining work
 
-- `continue`: legal shot, rack remains active.
-- `win`: legal terminal shot.
-- `foul`: illegal shot; rack continues under the configured foul consequence.
-- `loss`: illegal terminal 8-ball shot or other configured loss condition.
-- `unusable`: simulator did not settle, cue is missing before the shot, or the result is incomplete.
+Run `node tests/rules-v1.cjs` and `node tests/simulation-interface.cjs`. The rules suite has 54 checks: synthetic event cases for both profiles plus three fixed layouts executed through the actual simulator. It checks input immutability and determinism, incorrect contacts, turn changes, call assignment, scratches, endgames, foul history, malformed ledgers, and unsupported states. The separate 15-check simulator suite verifies physics parity and state isolation.
 
-A foul or loss cannot be a recommended coaching shot. Safety candidates may be legal and non-scoring, but they must carry a clear safety reason.
-
-## Candidate-search requirements
-
-The candidate generator must provide an intended first object ball and pocket for each candidate. The rules evaluator then checks the simulation result against that intention. It must not infer legality from the candidate label alone.
-
-The evaluator must preserve extra legal pots and actual pocket order. In 9-ball, an extra ball pocketed before the lowest ball is still illegal if first contact was wrong; after legal first contact, extra pots can be legal. In 8-ball, extra group/opponent pots require the selected variant's explicit policy and must not be silently treated as legal.
-
-## Required acceptance layouts
-
-Before merging the rules implementation, add fixed layouts covering:
-
-1. 9-ball legal lowest-ball pot.
-2. 9-ball wrong first contact.
-3. 9-ball legal safety with no pot.
-4. 9-ball legal 9-ball win.
-5. 9-ball 9-ball pot after wrong first contact.
-6. 9-ball scratch with an object ball pocketed.
-7. 9-ball object ball off the table.
-8. 8-ball open-table solid assignment.
-9. 8-ball open-table stripe assignment.
-10. 8-ball open-table 8 attempt.
-11. 8-ball assigned-group legal shot.
-12. 8-ball opponent first contact.
-13. 8-ball early 8 loss.
-14. 8-ball cleared-group 8 win.
-15. 8-ball scratch on a made ball.
-16. Unsettled/time-limit simulation rejected for both profiles.
-
-These are rule cases, separate from the 20–30 full coaching layouts required by the frozen Definition of Done.
-
-## Scope boundary
-
-This contract does not add a new UI, push-out mode, called-shot UI, league handicaps, scorekeeping redesign, or cloud service. It supplies the stable legality boundary needed by candidate scoring. The next implementation should be a pure `evaluateRules(snapshot, simulationResult, profile)` function with unit tests, then a candidate adapter that calls it.
+These tests are not the frozen V1 requirement for 20–30 complete coaching acceptance layouts. Browser/device tests, candidate generation/ranking, two-shot coaching rollout, position zones, five hint levels, and distribution isolation remain future integration work. Nothing in this change alters the original repository or activates a new trainer UI.
