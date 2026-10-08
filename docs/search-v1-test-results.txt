@@ -1,0 +1,26 @@
+PASS generation is bounded, deterministic and targets lowest 9-ball
+PASS 8-ball targets assigned group and switches to eight
+PASS open 8-ball excludes eight as first target
+PASS blocked cue lane excludes direct route
+PASS blocked object lane excludes direct route
+PASS unsupported near cushion never runs simulator
+PASS unsupported touching balls never runs simulator
+PASS unsupported missing cue never runs simulator
+PASS unsupported invalid coordinates never runs simulator
+PASS reject unknown profile and phase
+PASS hard budget enforced and unsearched continuation labeled
+PASS reject scratch as pocketing recommendation
+PASS reject no-contact as pocketing recommendation
+PASS reject safety as pocketing recommendation
+PASS unsupported endpoint does not spawn second shot
+PASS immediate win stops rollout
+PASS second-shot input contains exact first-shot final table including moved objects
+PASS cancellation after cooperative yield discards stale recommendations
+PASS pre-cancelled request does no work
+PASS input edits during yield cannot change captured layout
+PASS invalid budgets and simulator failures surface explicitly
+INFO real 9-ball search: 75 simulations, 2539 ms in Node VM (not device acceptance)
+PASS real 9-ball two-shot finish; deterministic immutable full-table rollout
+PASS real top recommendation replays both shots and ends in legal win
+PASS real called 8-ball pot and subsequent eight-ball win
+24 search checks passed. Browser/device acceptance remains pending.
