@@ -2,13 +2,14 @@
 (()=>{
  'use strict';
  const api=window.__BT_SIMULATION__,$=id=>document.getElementById(id);
+ const isProjector=new URLSearchParams(location.search).get('projector')==='1';
  const toggle=document.createElement('button');toggle.id='hintsToggle';toggle.textContent='HINTS';toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-controls','hintsPanel');document.body.append(toggle);
  const panel=document.createElement('aside');panel.id='hintsPanel';panel.hidden=true;panel.setAttribute('aria-label','Shot coaching');
  panel.innerHTML=`<h2>Shot coaching</h2><p class="hintNote">Choose your game and ask for a hint. Each level reveals a little more.</p>
  <details id="hintsSettings" open><summary>Game and practice setup</summary><label>Game<select id="hintsGame"><option value="nine">9-ball</option><option value="eight">8-ball</option></select></label>
  <label id="hintsGroupLabel" hidden>Your group<select id="hintsGroup"><option value="solids">Solids</option><option value="stripes">Stripes</option><option value="open">Open table</option></select></label>
  <label id="hintsFoulsLabel">Your consecutive fouls<select id="hintsFouls"><option value="unknown">Choose foul history</option><option value="0">0</option><option value="1">1</option><option value="2">2 — no warning given</option><option value="warned">2 — warning given</option></select></label>
- <button id="hintsPractice">Load practice layout (Undo available)</button></details>
+ <button id="hintsProjector">Open projector view</button><button id="hintsPractice">Load practice layout (Undo available)</button></details>
  <div class="hintRow"><button id="hintsFind">Find a shot</button><button id="hintsCancel" disabled>Cancel</button></div>
  <p id="hintsStatus" role="status" aria-live="polite">Ready. Use a normal shot layout, after the break.</p>
  <div id="hintsResult" hidden><label>Hint level<select id="hintsLevel"><option value="1">1 · Ball and pocket</option><option value="2">2 · Position zone</option><option value="3">3 · Aim and route</option><option value="4">4 · Speed and spin</option><option value="5">5 · Explanation</option></select></label>
@@ -21,8 +22,9 @@
  function busy(on){$('hintsFind').disabled=on;$('hintsCancel').disabled=!on;$('hintsPractice').disabled=on;}
  function invalidate(message='Table changed. Find a fresh shot.'){
   request++;controller?.abort();controller=null;rec=zone=source=null;busy(false);$('hintsResult').hidden=true;$('hintsStatus').textContent=message;
+  if(!isProjector)api.syncProjector();
  }
- function redraw(){api.redraw();}
+ function redraw(){api.redraw();if(!isProjector)api.syncProjector();}
  function details(){
   if(!rec)return;const level=+$('hintsLevel').value,c=rec.candidate;
   const text=[`Pocket ball ${c.call.ballId} in the ${names[c.call.pocketId]} pocket.`];
@@ -69,10 +71,11 @@
  toggle.onclick=()=>{panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)$('hintsGame').focus();redraw();};
  panel.addEventListener('keydown',event=>{if(event.key==='Escape'){panel.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.focus();redraw();}});
  for(const id of ['hintsGame','hintsGroup','hintsFouls'])$(id).onchange=()=>{invalidate('Settings changed. Find a fresh shot.');$('hintsGroupLabel').hidden=$('hintsGame').value!=='eight';$('hintsFoulsLabel').hidden=$('hintsGame').value!=='nine';redraw();};
+ $('hintsProjector').onclick=()=>{if(!api.openProjector())$('hintsStatus').textContent='Allow pop-up windows for this page, then try again.';};
  $('hintsFind').onclick=find;$('hintsCancel').onclick=()=>{invalidate('Search cancelled.');redraw();};
  $('hintsPractice').onclick=()=>{if(api.isBusy())return;api.practice($('hintsGame').value);$('hintsGroup').value='solids';$('hintsFouls').value='0';invalidate('Practice layout ready. Select Find a shot.');redraw();};
  $('hintsLevel').onchange=details;$('hintsShape').onchange=details;
- $('hintsApply').onclick=()=>{if(!rec||api.isBusy())return;if(JSON.stringify(api.capture())!==source){invalidate();redraw();return;}const shot=rec.candidate.shot;api.apply(shot);$('hintsStatus').textContent='Shot settings applied. Use Animate to try it.';};
+ $('hintsApply').onclick=()=>{if(!rec||api.isBusy())return;if(JSON.stringify(api.capture())!==source){invalidate();redraw();return;}const shot=rec.candidate.shot;api.apply(shot);$('hintsStatus').textContent='Shot settings applied. Use Execute Shot to try it.';};
  function draw(ctx,map){
   if(!rec||api.isBusy())return;
   const level=+$('hintsLevel').value,ball=JSON.parse(source).balls.find(b=>b.id===rec.candidate.call.ballId);
@@ -83,7 +86,21 @@
   const s=JSON.parse(source),pockets={TL:{x:0,y:0},TM:{x:s.tableL/2,y:0},TR:{x:s.tableL,y:0},BL:{x:0,y:s.tableW},BM:{x:s.tableL/2,y:s.tableW},BR:{x:s.tableL,y:s.tableW}};
   mark(ball,`Ball ${ball.id}`);mark(pockets[rec.candidate.call.pocketId],'Pocket');
   if(level>=3){line([s.balls.find(b=>b.id===0),rec.candidate.shot.freeAim],'#fff28a',[7,5]);line([ball,pockets[rec.candidate.call.pocketId]],'#a4ffd2',[7,5]);}
+  if(isProjector&&level>=4){
+   const shot=rec.candidate.shot;
+   const lines=[`Speed ${shot.speed.toFixed(2)} m/s · ${shot.follow<0?'Draw':shot.follow>0?'Follow':'Center hit'} ${Math.round(Math.abs(shot.follow)*100)}%`, 'No side spin · Level cue'];
+   if(level>=5)lines.push(rec.outcome.terminal?'Verified rack-winning shot':rec.nextShot?'Verified two-shot plan · Sampled position guide':'First pot verified · No verified continuation');
+   ctx.setLineDash([]);ctx.fillStyle='#07191de6';ctx.fillRect(14,14,520,lines.length*27+16);ctx.fillStyle='#fff';ctx.font='bold 18px system-ui';lines.forEach((text,i)=>ctx.fillText(text,24,40+i*27));
+  }
   ctx.restore();
  }
- window.BTHintsUI=Object.freeze({invalidate,draw});
+ function exportState(){return rec?{version:1,rec,zone,source,level:+$('hintsLevel').value,shape:$('hintsShape').value}:null;}
+ function receiveState(value){
+  if(!isProjector)return;
+  rec=zone=source=null;
+  if(!value||value.version!==1||!value.rec||typeof value.source!=='string'||value.source!==JSON.stringify(api.capture())||![1,2,3,4,5].includes(value.level)||!['circle','lane','wedge','irregular'].includes(value.shape))return;
+  rec=value.rec;zone=value.zone;source=value.source;$('hintsLevel').value=String(value.level);$('hintsShape').value=value.shape;
+ }
+ window.BTHintsUI=Object.freeze({invalidate,draw,exportState,receiveState});
+ if(isProjector&&window.opener)window.opener.postMessage({type:'projectorReady'},location.origin==='null'?'*':location.origin);
 })();

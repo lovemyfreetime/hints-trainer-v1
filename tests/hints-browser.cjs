@@ -13,7 +13,7 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
  });
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const context=await browser.newContext({viewport:{width:1440,height:1000}}),page=await context.newPage(),errors=[];
- page.on('pageerror',e=>errors.push(e.message));let count=0;
+ page.on('pageerror',e=>errors.push(e.message));let count=0,projector;
  async function test(name,fn){await fn();console.log('PASS '+name);count++;}
  try{
   await page.goto(process.env.HINTS_TEST_URL||`http://127.0.0.1:${server.address().port}/index.html`);
@@ -40,9 +40,33 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
    assert(await page.locator('#hintsApply').isVisible());
    await page.screenshot({path:process.env.HINTS_SCREENSHOT||'/tmp/hints-preview.png',fullPage:true});
   });
+  await test('projector opened after search receives current table, level and shape',async()=>{
+   await page.locator('#hintsSettings summary').click();
+   const popup=page.waitForEvent('popup');await page.locator('#hintsProjector').click();projector=await popup;
+   projector.on('pageerror',e=>errors.push(e.message));
+   await projector.waitForFunction(()=>window.BTHintsUI?.exportState()?.level===5);
+   assert.equal(await projector.locator('#hintsToggle').isVisible(),false);
+   const control=await page.evaluate(()=>window.BTHintsUI.exportState());
+   assert.deepEqual(await projector.evaluate(()=>window.BTHintsUI.exportState()),control);
+   await projector.screenshot({path:'/tmp/hints-projector-preview.png'});
+   await page.locator('#hintsSettings summary').click();
+  });
+  await test('projector tracks changed hint level and zone shape',async()=>{
+   await page.locator('#hintsLevel').selectOption('2');await page.locator('#hintsShape').selectOption('wedge');
+   await projector.waitForFunction(()=>window.BTHintsUI.exportState()?.level===2&&window.BTHintsUI.exportState()?.shape==='wedge');
+   await page.locator('#hintsLevel').selectOption('5');
+  });
+  await test('projector reload restores guidance and ignores unrelated sender',async()=>{
+   await projector.reload();await projector.waitForFunction(()=>window.BTHintsUI?.exportState()?.level===5);
+   const before=await projector.evaluate(()=>JSON.stringify(window.BTHintsUI.exportState()));
+   await projector.evaluate(()=>window.postMessage({type:'state',state:{balls:[]},hints:null},location.origin));
+   await projector.waitForTimeout(50);
+   assert.equal(await projector.evaluate(()=>JSON.stringify(window.BTHintsUI.exportState())),before);
+  });
   await test('applying recommendation changes controls and clears stale hints',async()=>{
    await page.locator('#hintsApply').click();assert.equal(await page.locator('#hintsResult').isVisible(),false);
    assert.match(await page.locator('#hintsStatus').innerText(),/applied/);
+   await projector.waitForFunction(()=>window.BTHintsUI.exportState()===null);
   });
   await test('changing game cancels in-progress results',async()=>{
    await page.locator('#hintsFind').click();await page.locator('#hintsSettings summary').click();await page.locator('#hintsGame').selectOption('eight');
@@ -54,8 +78,14 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
    await page.waitForFunction(()=>!document.getElementById('hintsResult').hidden,{},{timeout:60000});
    assert.match(await page.locator('#hintsStatus').innerText(),/two-shot/);
   });
+  await test('starting animation clears hints in both windows',async()=>{
+   await page.evaluate(()=>document.getElementById('animate').click());
+   assert.equal(await page.evaluate(()=>window.BTHintsUI.exportState()),null);
+   await projector.waitForFunction(()=>window.BTHintsUI.exportState()===null);
+   await page.waitForFunction(()=>!window.__BT_SIMULATION__.isBusy(),{},{timeout:30000});
+  });
   await test('keyboard dismissal and narrow viewport preserve reachable controls',async()=>{
-   await page.locator('#hintsLevel').focus();await page.keyboard.press('Escape');assert.equal(await page.locator('#hintsPanel').isVisible(),false);
+   await page.locator('#hintsFind').focus();await page.keyboard.press('Escape');assert.equal(await page.locator('#hintsPanel').isVisible(),false);
    await page.setViewportSize({width:390,height:844});await page.locator('#hintsToggle').click();
    const box=await page.locator('#hintsPanel').boundingBox();assert(box.x>=0&&box.x+box.width<=390);
    await page.screenshot({path:'/tmp/hints-preview-narrow.png',fullPage:true});

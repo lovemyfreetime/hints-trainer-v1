@@ -6,7 +6,7 @@ This branch loads the existing rules/search modules into `index.html` and adds a
 
 Open the development page, select HINTS, choose 8-ball or 9-ball and the current group/foul history, then select Find a shot. Load practice layout provides a reversible two-shot example; Undo Last Shot restores the previous table. The five cumulative levels reveal target/pocket, position guide, aim/route, speed/spin, and explanation. Set up this shot copies the verified first shot's controls without animating it automatically; Undo also restores that change.
 
-Search and zone sampling cancel when a preview refresh or game setting changes. A captured-state comparison also guards completed results and applying controls. Table overlays remain visible when the panel is closed, and are cleared on relevant edits. The top option alone is shown in this preview. Projector windows do not yet receive the new hint state.
+Search and zone sampling cancel when a preview refresh or game setting changes. A captured-state comparison also guards completed results and applying controls. Table overlays remain visible when the panel is closed, and are cleared on relevant edits. The top option alone is shown in this preview. Projector hint synchronization is added by the subsequent `projector-hints.md` integration.
 
 The panel uses 18px body/control text, controls at least 48px tall, focus outlines, status announcements, and keyboard dismissal. Setup collapses when a plan is ready. It fits a 390px-wide viewport; the legacy trainer itself still expects a larger landscape canvas. Device-specific layout and usability testing remain pending.
 
