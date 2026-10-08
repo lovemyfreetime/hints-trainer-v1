@@ -1,0 +1,16 @@
+PASS existing numerical self-tests
+PASS unchanged physics and isolated evaluation: default
+PASS unchanged physics and isolated evaluation: follow
+PASS unchanged physics and isolated evaluation: draw
+PASS unchanged physics and isolated evaluation: english
+PASS unchanged physics and isolated evaluation: airborne
+PASS unchanged physics and isolated evaluation: scratch
+PASS unchanged physics and isolated evaluation: marker
+PASS jaw-contact no longer depends on browser named globals
+PASS time limit explicitly rejected as usable and terminal frame exact
+PASS snapshot inputs stay immutable; full remaining table feeds next shot
+PASS pocket identity, scratch and no-cue contract
+PASS reject invalid parameters without modifying live state
+PASS finally restores exact live reference after engine exception
+PASS animation commit uses exact finalBalls with stale sampled frame
+15 checks passed. Node VM validation only; browser/device acceptance remains pending.

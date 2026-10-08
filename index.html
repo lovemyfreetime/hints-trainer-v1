@@ -3034,10 +3034,9 @@
             const e = Math.max(.72, S.railRest * .92);
             b.vx -= (1 + e) * vn * nx;
             b.vy -= (1 + e) * vn * ny;
-            if (firstEvent === '—')
-                firstEvent = `${b.n} → ${name}`;
+            return true;
         }
-        return true;
+        return false;
     }
     function cueBall() { return S.balls.find(b => b.id === 0); }
     function compassState() {
@@ -3743,11 +3742,16 @@
             return true;
         return false;
     }
-    function simulate(makeFrames = false) {
+    function simulate(makeFrames = false, options = {}) {
+        const recordPaths = options.recordPaths !== false;
         const B = cloneBallsForPhysics();
         const cb = B.find(b => b.id === 0);
         if (!cb)
-            return { paths: {}, frames: [], firstEvent: '—', firstBallContact: null };
+            return { paths: {}, frames: [], firstEvent: '—', firstBallContact: null,
+                pocketEvents: [], events: [], airborne: null,
+                finalBalls: B.map(b => ({id:b.id,x:b.x,y:b.y,z:b.z,active:b.active})),
+                finalVelocities: B.map(b => ({id:b.id,vx:0,vy:0,vz:0,wx:0,wy:0,wz:0})),
+                settled: false, terminationReason: 'missing-cue-ball', duration: 0 };
         const aimD = aimDirection(), d = strikeDirection();
         const airborneMode = S.airbornePhysics === true;
         if (airborneMode) {
@@ -3768,11 +3772,12 @@
         const dt = 1 / 600, maxT = 20, maxSteps = Math.ceil(maxT / dt), g = APK.gravity, R = S.ballR;
         const paths = {};
         for (const b of B)
-            paths[b.id] = [{ x: b.x, y: b.y, z: b.z, t: 0 }];
+            if (recordPaths) paths[b.id] = [{ x: b.x, y: b.y, z: b.z, t: 0 }];
         const frames = [];
         let firstEvent = '—', firstBallContact = null, sampleEvery = 6, frameEvery = 10;
         let simTime = 0;
-        const pocketEvents = [];
+        const pocketEvents = [], events = [];
+        let duration = 0;
         const landings = [], clearanceMap = new Map();
         let takeoff = null;
         const lastColl = new Map(), Icoef = 2 / 5; // I = 2/5 mR² for a solid sphere
@@ -3921,6 +3926,7 @@
             b.vx = vnAfter * nx + vtDamped * tx;
             b.vy = vnAfter * ny + vtDamped * ty;
             b.wz *= 1 - APK.railSpinDamping;
+            events.push({ type: 'rail', id: b.id, rail: name, t: simTime });
             if (firstEvent === '—')
                 firstEvent = `${b.n} → ${name}`;
             return true;
@@ -3929,6 +3935,7 @@
         for (let step = 0; step < maxSteps; step++) {
             const t = step * dt;
             simTime = t;
+            duration = (step + 1) * dt;
             let moving = false;
             for (const b of B) {
                 if (!b.active) continue;
@@ -3959,6 +3966,7 @@
                 for (const b of B) {
                     if (!b.active || canReachCushion(b)) continue;
                     if (b.x < 0 || b.x > S.tableL || b.y < 0 || b.y > S.tableW) {
+                        events.push({ type: 'off-table', id: b.id, t });
                         b.active = false;
                         b.vx = b.vy = b.vz = b.wx = b.wy = b.wz = 0;
                         if (firstEvent === '—') firstEvent = `${b.n} jumped off table`;
@@ -3969,8 +3977,11 @@
             for (const b of B) {
                 const lowEnoughForPocket = !airborneMode || b.z <= R * 1.12;
                 if (b.active && lowEnoughForPocket && pocketCapture(b)) {
-                    pocketEvents.push({id:b.id,x:b.x,y:b.y,t,speed:Math.hypot(b.vx,b.vy)});
-                    paths[b.id].push({x:b.x,y:b.y,z:b.z,t});
+                    const pocketId = nearestLogicalPocket(b).name;
+                    const event = {id:b.id,x:b.x,y:b.y,t,speed:Math.hypot(b.vx,b.vy),pocketId};
+                    pocketEvents.push(event);
+                    events.push(Object.assign({ type: 'pocket' }, event));
+                    if (recordPaths) paths[b.id].push({x:b.x,y:b.y,z:b.z,t});
                     b.active = false;
                     b.vx = b.vy = b.vz = b.wx = b.wy = b.wz = 0;
                     if (firstEvent === '—') firstEvent = `${b.n} pocket`;
@@ -4006,8 +4017,12 @@
             for (const b of B) {
                 if (!b.active || !canReachCushion(b))
                     continue;
-                for (let ji = 0; ji < jaws.length; ji++)
-                    collideWithJaw(b, jaws[ji][0], jaws[ji][1], `pocket jaw`);
+                for (let ji = 0; ji < jaws.length; ji++) {
+                    if (collideWithJaw(b, jaws[ji][0], jaws[ji][1], 'pocket jaw')) {
+                        events.push({ type: 'jaw', id: b.id, jaw: ji, t });
+                        if (firstEvent === '—') firstEvent = `${b.n} → pocket jaw`;
+                    }
+                }
             }
             // Equal-mass solid-sphere collisions. Normal impulse transfers the line-of-centers
             // component; Coulomb-limited tangential impulse produces collision-induced throw.
@@ -4044,6 +4059,7 @@
                                         cutAngle: ca, distanceBalls: cue.travel / (2 * R), t
                                     };
                                 }
+                                events.push({ type: 'ball-contact', ids: [a.id, b.id], t });
                                 lastColl.set(key, step);
                                 const jn = -(1 + S.ballRest) * relN / 2;
                                 a.vx -= jn * nx; a.vy -= jn * ny;
@@ -4092,6 +4108,7 @@
                                         cueHeight: cue.z, verticalNormal: (a.id === 0 ? nz : -nz), t
                                     };
                                 }
+                                events.push({ type: 'ball-contact', ids: [a.id, b.id], t });
                                 lastColl.set(key, step);
                                 const jn = -(1 + S.ballRest) * relN / 2;
                                 a.vx -= jn * nx; a.vy -= jn * ny; a.vz -= jn * nz;
@@ -4119,7 +4136,7 @@
                         }
                     }
                 }
-            if (step % sampleEvery === 0) {
+            if (recordPaths && step % sampleEvery === 0) {
                 for (const b of B)
                     if (b.active)
                         paths[b.id].push({ x: b.x, y: b.y, z: b.z, t });
@@ -4129,6 +4146,12 @@
             if (!moving && step > 30)
                 break;
         }
+        const settled = !B.some(b => b.active && (Math.hypot(b.vx,b.vy) > .002 ||
+            Math.abs(b.wz) > .05 || R * Math.hypot(b.wx,b.wy) > .002 ||
+            Math.abs(b.vz) > .002 || (airborneMode && b.z > R + 1e-7)));
+        const finalBalls = B.map(b => ({ id:b.id, x:b.x, y:b.y, z:b.z, active:b.active }));
+        // Preserve exact end state even between frame-sampling boundaries.
+        if (makeFrames) frames.push(finalBalls.map(b => Object.assign({}, b)));
         const clearances = Array.from(clearanceMap.values());
         let primaryClearance = null;
         if (airborneMode) {
@@ -4137,13 +4160,82 @@
             if (candidates.length)
                 primaryClearance = candidates.sort((a,b) => a.margin - b.margin)[0];
         }
-        return { paths, frames, firstEvent, firstBallContact, pocketEvents,
+        return { paths, frames, firstEvent, firstBallContact, pocketEvents, events,
+            settled, terminationReason: settled ? 'settled' : 'time-limit', duration,
+            finalVelocities: B.map(b => ({ id:b.id,vx:b.vx,vy:b.vy,vz:b.vz,wx:b.wx,wy:b.wy,wz:b.wz })),
             airborne: airborneMode ? {
                 maxCueHeight: Math.max(0, maxCueHeight - R), airborneDistance, bedBounceCount,
                 takeoff, landings, clearances, primaryClearance
             } : null,
-            finalBalls: B.map(b => ({ id: b.id, x: b.x, y: b.y, z: b.z, active: b.active })) };
+            finalBalls };
     }
+    function simulationFields() {
+        return ['tableL','tableW','ballR','muSlide','muRoll','muBall','ballRest',
+            'railRest','railTang','cueEndmassRatio','airbornePhysics','tableRest','bedImpactMu',
+            'speed','follow','sideSpin','cueElevationDeg'];
+    }
+    function captureSimulationSnapshot(state = S) {
+        const snapshot = { physicsVersion: 'hints-sim-1', balls: state.balls
+            .filter(b => !b.marker).map(b => ({id:b.id,n:b.n,x:b.x,y:b.y,active:b.active})),
+            freeAim: { x:state.freeAim.x, y:state.freeAim.y } };
+        for (const key of simulationFields()) snapshot[key] = state[key];
+        return snapshot;
+    }
+    function validateSimulationSnapshot(q) {
+        if (!q || q.physicsVersion !== 'hints-sim-1' || !Array.isArray(q.balls))
+            throw new TypeError('Expected a hints-sim-1 snapshot');
+        for (const key of simulationFields()) {
+            if (key === 'airbornePhysics') {
+                if (typeof q[key] !== 'boolean') throw new TypeError('Invalid airbornePhysics');
+            } else if (!Number.isFinite(q[key])) throw new TypeError('Invalid ' + key);
+        }
+        if (!(q.ballR > 0 && q.tableL > 4*q.ballR && q.tableW > 4*q.ballR &&
+            q.muSlide > 0 && q.muRoll > 0 && q.muBall >= 0 && q.muBall <= .2 &&
+            q.cueEndmassRatio >= 8 && q.cueEndmassRatio <= 60 && q.speed >= 0 && q.speed <= 6 &&
+            Math.abs(q.follow) <= 1 && Math.abs(q.sideSpin) <= 1 && q.cueElevationDeg >= 0 &&
+            q.cueElevationDeg <= (q.airbornePhysics ? 70 : 15) &&
+            q.ballRest >= 0 && q.ballRest <= 1 && q.railRest >= 0 && q.railRest <= 1 &&
+            q.railTang >= 0 && q.railTang <= 1 && q.tableRest >= 0 && q.tableRest <= .95 &&
+            q.bedImpactMu >= 0 && q.bedImpactMu <= .5)) throw new RangeError('Invalid simulation calibration or stroke');
+        if (!q.freeAim || !Number.isFinite(q.freeAim.x) || !Number.isFinite(q.freeAim.y))
+            throw new TypeError('Invalid aim');
+        const ids = new Set();
+        if (q.balls.length > 16) throw new RangeError('Too many physical balls');
+        for (const b of q.balls) {
+            if (!Number.isInteger(b.id) || b.id < 0 || b.id > 15 || ids.has(b.id) ||
+                !Number.isFinite(b.x) || !Number.isFinite(b.y) || typeof b.active !== 'boolean')
+                throw new TypeError('Invalid or duplicate ball');
+            if (b.active && (b.x < 0 || b.x > q.tableL || b.y < 0 || b.y > q.tableW))
+                throw new RangeError('Active ball outside table');
+            ids.add(b.id);
+        }
+    }
+    function evaluateSimulationShot(snapshot, shot = {}, options = {}) {
+        const allowed = ['speed','follow','sideSpin','cueElevationDeg','freeAim'];
+        for (const key of Object.keys(shot)) if (!allowed.includes(key))
+            throw new TypeError('Unknown shot parameter: ' + key);
+        const candidate = Object.assign({}, snapshot, shot);
+        validateSimulationSnapshot(candidate);
+        const isolated = captureSimulationSnapshot(candidate);
+        const liveState = S;
+        try {
+            S = isolated;
+            const result = simulate(options.recordFrames === true, {recordPaths:options.recordPaths === true});
+            // A scratch stays a scratch; only active remaining balls are carried forward.
+            const finalState = captureSimulationSnapshot(isolated);
+            finalState.balls = result.finalBalls.filter(b => b.active).map(b => ({
+                id:b.id, n:isolated.balls.find(source => source.id === b.id).n,
+                x:b.x, y:b.y, active:true
+            }));
+            return Object.assign({}, result, { physicsVersion:'hints-sim-1',
+                usable:result.settled && finalState.balls.some(b => b.id === 0), finalState });
+        } finally {
+            S = liveState;
+        }
+    }
+    window.__BT_SIMULATION__ = Object.freeze({
+        version:'hints-sim-1', capture:captureSimulationSnapshot, evaluate:evaluateSimulationShot
+    });
     const airborneGuidanceCache = new Map();
     function clearanceForBall(preview, ballId) {
         const a = preview && preview.airborne;
@@ -7093,7 +7185,7 @@
         // before Shot 1 is committed.  At the end of the animation this Shot 2 plan
         // becomes the new Shot 1, while Shot 2 itself is hidden.
         const shot2Handoff = S.shot2Enabled ? JSON.parse(JSON.stringify(ensureShot2())) : null;
-        const finalFrame = sim.frames[sim.frames.length - 1];
+        const finalFrame = sim.finalBalls;
         // Determine actual pocketing order from animation frames, not ball number.
         const pocketFrame = new Map();
         for (let fi = 0; fi < sim.frames.length; fi++) {
@@ -7230,6 +7322,10 @@
             return;
         const preShot = cleanSnapshot();
         const sim = simulate(true);
+        if (!sim.settled) {
+            toast('Shot did not reach rest. Reduce speed or check table calibration.');
+            return;
+        }
         if (!sim.frames.length)
             return;
         let idx = 0;
