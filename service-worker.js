@@ -1,14 +1,16 @@
-const CACHE_NAME = 'billiards-trainer-4-12-ai-camera-v21';
-const CACHE_PREFIX = 'billiards-trainer-4-12-';
+const CACHE_NAME = 'hints-trainer-v1-preview-1';
+const CACHE_PREFIX = 'hints-trainer-v1-';
 const APP_SHELL = [
   './index.html',
-  './manifest.webmanifest'
+  './manifest.webmanifest',
+  './src/rules-v1.js', './src/search-v1.js', './src/zones-v1.js',
+  './src/hints-ui.js', './src/hints-ui.css'
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => Promise.all(APP_SHELL.map(url => cache.add(url).catch(() => null))))
+      .then(cache => cache.addAll(APP_SHELL))
       .then(() => self.skipWaiting())
   );
 });
@@ -37,8 +39,8 @@ async function networkFirst(request) {
     }
     return response;
   } catch (err) {
-    return (await caches.match(request)) ||
-           (request.mode === 'navigate' ? await caches.match('./index.html') : null) ||
+    return (await cache.match(request)) ||
+           (request.mode === 'navigate' ? await cache.match('./index.html') : null) ||
            Response.error();
   }
 }

@@ -1,7 +1,7 @@
 {
-  "name": "Billiards Trainer 4.12 \u2014 AI Camera Edition",
-  "short_name": "Billiards Trainer",
-  "description": "Billiards Trainer 4.12 with local pool-table AI photo analysis, camera capture, and true/virtual diamond systems.",
+  "name": "Hints Trainer V1 \u2014 Development Preview",
+  "short_name": "Hints V1 Preview",
+  "description": "Offline billiards coaching development preview",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -25,5 +25,6 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "id": "./hints-v1"
 }

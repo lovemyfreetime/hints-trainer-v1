@@ -1,0 +1,7 @@
+PASS all four shapes stay inside fully supported grid
+PASS failed center leaves no suggested area
+PASS irregular shape excludes unsupported cells; circle unavailable
+PASS no continuation returns unavailable without simulation
+PASS real second-shot zone samples preserve table and verify center
+PASS cancelled sampling discards partial guidance
+6 position-zone checks passed.

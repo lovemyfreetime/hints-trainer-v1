@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Billiards Trainer 4.12 — AI Camera Edition</title>
+<title>Hints Trainer V1 — Development Preview</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 <meta name="theme-color" content="#090b0e">
-<meta name="application-name" content="Billiards Trainer 4.12">
+<meta name="application-name" content="Hints Trainer V1">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Billiards Trainer">
+<meta name="apple-mobile-web-app-title" content="Hints V1 Preview">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
   #markerRailControls { position:absolute;z-index:9;display:none;pointer-events:none; }
@@ -1245,6 +1245,7 @@
   }
 
 </style>
+<link rel="stylesheet" href="./src/hints-ui.css">
 </head>
 <body>
 <div id="app">
@@ -1360,7 +1361,7 @@
     <div id="toast"></div>
   </div>
   <aside id="panel">
-    <h1>Billiards Trainer<span class="editionSub">AI Camera Edition</span></h1>
+    <h1>Hints Trainer V1<span class="editionSub">Development Preview</span></h1>
 
     <div class="section open">
       <button class="sectionToggle" type="button"><span>SHOT</span></button>
@@ -1871,7 +1872,7 @@
         // final resting position. After that, ordinary on/off toggles preserve it.
         S.shot2Initialized = false;
     }
-    const LAYOUT_STORE_KEY = 'billiardTrainerSavedLayoutsV1';
+    const LAYOUT_STORE_KEY = 'hintsTrainerV1SavedLayoutsV1';
     function readSavedLayouts() {
         try {
             const a = JSON.parse(localStorage.getItem(LAYOUT_STORE_KEY) || '[]');
@@ -2080,12 +2081,12 @@
     }
 
     function saveState() { try {
-        localStorage.setItem('billiardTrainerState', JSON.stringify(Object.assign(Object.assign({}, S), { preview: null })));
+        localStorage.setItem('hintsTrainerV1State', JSON.stringify(Object.assign(Object.assign({}, S), { preview: null })));
     }
     catch (e) { } }
     function restoreState() {
         try {
-            const x = JSON.parse(localStorage.getItem('billiardTrainerState') || 'null');
+            const x = JSON.parse(localStorage.getItem('hintsTrainerV1State') || 'null');
             if (x && x.balls) {
                 S = Object.assign(Object.assign(Object.assign({}, defaultState()), x), { preview: null });
                 if (!S.freeAim)
@@ -2105,7 +2106,7 @@
                 // v4 migration: hide the player controls once for existing installs so the
                 // new default-off setting takes effect without clearing the user's other data.
                 try {
-                    const scoreMigrationKey = 'billiardTrainerScoreBoardDefaultOffV4';
+                    const scoreMigrationKey = 'hintsTrainerV1ScoreBoardDefaultOffV4';
                     if (!localStorage.getItem(scoreMigrationKey)) {
                         S.showScoreBoard = false;
                         localStorage.setItem(scoreMigrationKey, '1');
@@ -4234,7 +4235,30 @@
         }
     }
     window.__BT_SIMULATION__ = Object.freeze({
-        version:'hints-sim-1', capture:captureSimulationSnapshot, evaluate:evaluateSimulationShot
+        version:'hints-sim-1', capture:captureSimulationSnapshot, evaluate:evaluateSimulationShot,
+        redraw: () => draw(), isBusy: () => !!animation,
+        apply: shot => {
+            if (animation) return;
+            const keys=['freeAim','speed','follow','sideSpin','cueElevationDeg'];
+            if (!shot || Object.keys(shot).some(key => !keys.includes(key))) throw new TypeError('Invalid hint shot');
+            validateSimulationSnapshot(Object.assign({}, captureSimulationSnapshot(), shot));
+            undoStack.push(cleanSnapshot());
+            Object.assign(S, JSON.parse(JSON.stringify(shot)));
+            S.shot2Enabled = false;
+            updateUI(); refreshPreview(); runHistory.push(cleanSnapshot()); saveState(); syncProjector();
+        },
+        practice: game => {
+            if (animation || !['eight','nine'].includes(game)) return;
+            undoStack.push(cleanSnapshot());
+            const L=S.tableL, W=S.tableW;
+            S.balls=[{id:0,n:'CB',x:L/2,y:W*.5816,active:true},
+                {id:1,n:'1',x:L/2,y:W*.2505,active:true},
+                {id:game==='eight'?8:9,n:game==='eight'?'8':'9',x:L*.7606,y:W*.5369,active:true}];
+            if(game==='eight') S.balls.push({id:9,n:'9',x:L*.2237,y:W*.7606,active:true});
+            S.freeAim={x:L/2,y:W*.3}; S.speed=1.2; S.follow=0; S.sideSpin=0; S.cueElevationDeg=0;
+            resetGameMeta(game==='eight'?'8ball':'9ball');
+            normalizeBallSet(); updateUI(); refreshPreview(); runHistory.push(cleanSnapshot()); saveState(); syncProjector();
+        }
     });
     const airborneGuidanceCache = new Map();
     function clearanceForBall(preview, ballId) {
@@ -4434,6 +4458,7 @@
             s.freeAim = { x: s.freeAim.x + dx, y: s.freeAim.y + dy };
     }
     function refreshPreview() {
+        window.BTHintsUI?.invalidate();
         S.preview = simulate(false);
         S.firstEvent = S.preview.firstEvent;
         if (S.airbornePhysics) attachAirborneGuidance(1, S.preview);
@@ -4651,7 +4676,7 @@
         const w = canvas.width / DPR, h = canvas.height / DPR;
         let c = null;
         try {
-            c = JSON.parse(localStorage.getItem('billiardProjectorCorners') || 'null');
+            c = JSON.parse(localStorage.getItem('hintsTrainerV1ProjectorCorners') || 'null');
         }
         catch (e) { }
         if (!c || c.length !== 4)
@@ -4659,7 +4684,7 @@
         return c.map(p => ({ x: p.x * w, y: p.y * h }));
     }
     function setCal(c) { const w = canvas.width / DPR, h = canvas.height / DPR; try {
-        localStorage.setItem('billiardProjectorCorners', JSON.stringify(c.map(p => ({ x: p.x / w, y: p.y / h }))));
+        localStorage.setItem('hintsTrainerV1ProjectorCorners', JSON.stringify(c.map(p => ({ x: p.x / w, y: p.y / h }))));
     }
     catch (e) { } }
     function solveLinear(A, b) {
@@ -6056,6 +6081,7 @@
         drawBankKickGuide(map);
         drawTeachingCompass(map);
         drawCalibration(M);
+        window.BTHintsUI?.draw(ctx, map);
     }
     function tipDescription() { return tipDescriptionValues(S.sideSpin, S.follow); }
     function friendlyEventText(v) {
@@ -7371,7 +7397,7 @@
             states: runHistory.map(x => JSON.parse(JSON.stringify(x)))
         };
         try {
-            localStorage.setItem('billiardTrainerSavedRun', JSON.stringify(payload));
+            localStorage.setItem('hintsTrainerV1SavedRun', JSON.stringify(payload));
             toast('Run saved · ' + Math.max(0, payload.states.length - 1) + ' shots');
         }
         catch (e) {
@@ -7380,7 +7406,7 @@
     }
     function loadRun() {
         try {
-            const payload = JSON.parse(localStorage.getItem('billiardTrainerSavedRun') || 'null');
+            const payload = JSON.parse(localStorage.getItem('hintsTrainerV1SavedRun') || 'null');
             if (!payload || !Array.isArray(payload.states) || !payload.states.length) {
                 toast('No saved run found');
                 return;
@@ -7539,7 +7565,7 @@
     // Photos stay on this device and are never uploaded. We store the same down-scaled
     // image used by the analyzer so old table photos can be recalled later without
     // consuming the much smaller localStorage quota used for trainer settings/layouts.
-    const PHOTO_ARCHIVE_DB = 'BilliardsTrainerPhotoArchiveV1';
+    const PHOTO_ARCHIVE_DB = 'HintsTrainerV1PhotoArchive';
     const PHOTO_ARCHIVE_STORE = 'photos';
     function pvOpenPhotoArchiveDB(){
         return new Promise((resolve,reject)=>{
@@ -10822,6 +10848,10 @@
 
 
 
+<script src="./src/rules-v1.js"></script>
+<script src="./src/search-v1.js"></script>
+<script src="./src/zones-v1.js"></script>
+<script src="./src/hints-ui.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
   let swRefreshing = false;
